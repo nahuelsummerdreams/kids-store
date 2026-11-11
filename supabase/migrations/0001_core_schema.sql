@@ -238,3 +238,9 @@ begin
 end $$;
 revoke all on function create_tenant(text) from public;
 grant execute on function create_tenant(text) to authenticated;
+
+-- Helpers de RLS: solo usuarios autenticados (no expuestos a anon vía la API).
+revoke all on function is_member(uuid) from public;
+revoke all on function has_role(uuid, app_role[]) from public;
+grant execute on function is_member(uuid) to authenticated;
+grant execute on function has_role(uuid, app_role[]) to authenticated;
