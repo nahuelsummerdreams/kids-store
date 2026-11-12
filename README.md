@@ -15,7 +15,8 @@ Stack: Next.js · TypeScript · Tailwind · Supabase (Postgres, Auth, Storage, R
 | Dashboard | maqueta con datos demo |
 | Esquema multiempresa + RLS (`supabase/migrations/0001_core_schema.sql`) | aplicado a Supabase (proyecto `kids-store`, sa-east-1) |
 | Auth (usuario único), Productos con variantes, Inventario | listo |
-| POS, Caja, Clientes | placeholders |
+| POS (ventas con pago combinado) | listo |
+| Caja, Clientes | placeholders |
 
 ## Decisiones de arquitectura
 
