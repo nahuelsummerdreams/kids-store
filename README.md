@@ -39,3 +39,8 @@ Variables a definir cuando se conecte Supabase: `NEXT_PUBLIC_SUPABASE_URL`, `NEX
 ## Roadmap
 
 1. Administración · 2. Gestión comercial · 3. Tienda online · 4. AI Content Studio · 5. Inteligencia comercial.
+
+## Publicación
+
+Vercel (proyecto `kids-store`) despliega cada push a la rama de producción `claude/amazing-maxwell-1kiakm`.
+Variables requeridas en Vercel: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`.
