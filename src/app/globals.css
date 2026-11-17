@@ -51,5 +51,64 @@ body {
   .stock-out { @apply bg-coal text-white; }
   .notice-ok { @apply rounded-2xl bg-butter px-4 py-3 text-sm text-coal; }
   .notice-err { @apply rounded-2xl bg-rose-50 px-4 py-3 text-sm text-rose-700; }
-  .hazard { background: repeating-linear-gradient(-45deg, var(--coal) 0 12px, var(--yolk) 12px 24px); }
+}
+
+/* ───────── Movimiento ───────── */
+html { scroll-behavior: smooth; }
+
+@keyframes rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+@keyframes grow { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+@keyframes pop { 0% { opacity: 0; transform: scale(0.88); } 60% { transform: scale(1.04); } 100% { opacity: 1; transform: scale(1); } }
+@keyframes slide-up { from { transform: translateY(140%); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes shimmer { to { background-position: -200% 0; } }
+@keyframes stripes { to { transform: translateX(34px); } }
+@keyframes sheen { 0%, 70% { transform: translateX(-130%); } 100% { transform: translateX(130%); } }
+@keyframes float { 0%, 100% { transform: translateY(0) rotate(-1.5deg); } 50% { transform: translateY(-10px) rotate(1.5deg); } }
+@keyframes drift { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(24px, -18px); } }
+@keyframes wiggle { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-9deg) scale(1.06); } 60% { transform: rotate(7deg) scale(1.06); } }
+@keyframes confetti {
+  0% { opacity: 1; transform: translate(0, 0) rotate(0) scale(0.6); }
+  15% { transform: translate(calc(var(--x) * 0.55), calc(var(--y) * 0.35 - 90px)) rotate(calc(var(--r) * 0.4)) scale(1); }
+  70% { opacity: 1; }
+  100% { opacity: 0; transform: translate(var(--x), var(--y)) rotate(var(--r)) scale(1); }
+}
+
+@utility rise { animation: rise 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both; animation-delay: calc(var(--i, 0) * 70ms); }
+@utility grow { transform-origin: bottom; animation: grow 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) both; animation-delay: calc(var(--i, 0) * 80ms + 250ms); }
+@utility pop { animation: pop 0.45s cubic-bezier(0.3, 1.4, 0.5, 1) both; }
+@utility slide-up { animation: slide-up 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+@utility float { animation: float 6s ease-in-out infinite; }
+@utility drift { animation: drift 11s ease-in-out infinite; }
+
+@layer components {
+  .skeleton {
+    background: linear-gradient(90deg, rgba(11, 11, 11, 0.05) 25%, rgba(11, 11, 11, 0.11) 37%, rgba(11, 11, 11, 0.05) 63%);
+    background-size: 200% 100%;
+    animation: shimmer 1.4s linear infinite;
+  }
+  /* franja de peligro en movimiento */
+  .hazard { position: relative; overflow: hidden; background: var(--yolk); }
+  .hazard::before {
+    content: ""; position: absolute; inset: 0 -48px;
+    background: repeating-linear-gradient(-45deg, var(--coal) 0 12px, var(--yolk) 12px 24px);
+    animation: stripes 1.4s linear infinite;
+  }
+  /* brillo que cruza una tarjeta */
+  .sheen { position: relative; }
+  .sheen::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(105deg, transparent 38%, rgba(255, 255, 255, 0.5) 50%, transparent 62%);
+    transform: translateX(-130%);
+    animation: sheen 7s ease-in-out 1.2s infinite;
+  }
+  .lift { transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.25s; }
+  .lift:hover { transform: translateY(-4px); box-shadow: 0 2px 4px rgba(11, 11, 11, 0.05), 0 22px 36px -18px rgba(11, 11, 11, 0.28); }
+  .wiggle:hover img { animation: wiggle 0.6s ease-in-out; }
+  .btn-primary { @apply hover:-translate-y-0.5 hover:shadow-lg; }
+  .btn-soft { @apply hover:-translate-y-0.5 hover:shadow-md; }
+  .confetti-piece { position: absolute; left: 50%; top: 40%; width: 12px; height: 18px; border-radius: 3px; animation: confetti 1.8s cubic-bezier(0.15, 0.7, 0.35, 1) both; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
 }

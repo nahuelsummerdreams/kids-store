@@ -98,7 +98,7 @@ export default function Caja() {
 
   const diff = counted === "" ? null : Number(counted) - expected;
 
-  if (loading) return null;
+  if (loading) return <div className="space-y-6"><div className="skeleton h-12 w-48 rounded-2xl" /><div className="skeleton h-28 rounded-[24px]" /><div className="skeleton h-64 rounded-[28px]" /></div>;
   return (
     <section className="space-y-8">
       <header>

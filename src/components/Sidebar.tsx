@@ -9,7 +9,7 @@ import { IconLogout } from "@/components/Icons";
 
 export function Logo() {
   return (
-    <div className="flex items-center gap-3">
+    <div className="wiggle flex cursor-default items-center gap-3">
       <Image src="/logo.png" alt="Toxic Kids" width={679} height={720} priority className="h-11 w-auto" />
       <div className="leading-tight">
         <p className="display text-lg font-bold uppercase tracking-tight">Toxic Kids</p>
@@ -40,7 +40,7 @@ export function Sidebar() {
                 key={href}
                 href={href}
                 className={`flex items-center gap-3 rounded-2xl px-4 py-2.5 text-sm transition ${
-                  active ? "bg-yolk text-coal font-semibold" : "text-white/70 hover:bg-white/10 hover:text-white"
+                  active ? "bg-yolk text-coal font-semibold" : "text-white/70 hover:translate-x-1 hover:bg-white/10 hover:text-white"
                 }`}
               >
                 <Icon /> {label}

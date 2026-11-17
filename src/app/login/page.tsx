@@ -25,11 +25,12 @@ export default function Login() {
   return (
     <main className="grid min-h-screen md:grid-cols-2">
       <section className="relative hidden flex-col items-center justify-between overflow-hidden bg-coal p-12 text-white md:flex">
-        <div className="pointer-events-none absolute -top-24 left-1/2 h-96 w-96 -translate-x-1/2 rounded-full bg-yolk/20 blur-3xl" />
+        <div className="drift pointer-events-none absolute -top-24 left-1/3 h-96 w-96 rounded-full bg-yolk/20 blur-3xl" />
+        <div className="drift pointer-events-none absolute bottom-24 right-0 h-72 w-72 rounded-full bg-yolk/10 blur-3xl [animation-delay:-5s]" />
         <p className="eyebrow relative !text-white/40">Panel de tienda</p>
         <div className="relative text-center">
-          <Image src="/logo.png" alt="Toxic Kids" width={679} height={720} priority className="mx-auto w-60" />
-          <h2 className="display mt-10 text-4xl font-semibold leading-[1.1]">
+          <div className="pop"><Image src="/logo.png" alt="Toxic Kids" width={679} height={720} priority className="float mx-auto w-60 drop-shadow-[0_20px_40px_rgba(252,228,8,0.25)]" /></div>
+          <h2 style={{ "--i": 3 } as React.CSSProperties} className="rise display mt-10 text-4xl font-semibold leading-[1.1]">
             Cada prenda, cada talle,<br /><span className="text-yolk">bajo control.</span>
           </h2>
         </div>
@@ -37,7 +38,7 @@ export default function Login() {
       </section>
 
       <section className="flex items-center justify-center p-6">
-        <form onSubmit={submit} className="w-full max-w-sm space-y-4">
+        <form onSubmit={submit} className="rise w-full max-w-sm space-y-4">
           <div className="mb-6 md:hidden">
             <Image src="/logo.png" alt="Toxic Kids" width={679} height={720} priority className="h-24 w-auto" />
           </div>

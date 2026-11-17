@@ -52,13 +52,14 @@ export default function Productos() {
             <p className="page-sub">Usá el formulario de arriba: elegí talles y colores y se crean todas las variantes.</p>
           </div>
         )}
-        {products.map((p) => {
+        {loading && [0, 1, 2].map((i) => <div key={i} className="skeleton h-72 rounded-[28px]" />)}
+        {products.map((p, idx) => {
           const stock = p.variants.reduce((s, v) => s + v.stock, 0);
           const low = p.variants.filter((v) => v.stock <= v.min_stock).length;
           const prices = p.variants.map((v) => Number(v.price));
           const tone = ({ baby: "bg-butter", girl: "bg-yolk", boy: "bg-coal", unisex: "bg-white" } as Record<string, string>)[p.categories?.gender ?? ""] ?? "bg-coal/5";
           return (
-            <article key={p.id} className="card overflow-hidden">
+            <article key={p.id} style={{ "--i": Math.min(idx, 10) } as React.CSSProperties} className="card rise lift overflow-hidden">
               <div className={`flex h-28 items-end justify-between p-4 ${tone}`}>
                 <span className={`display text-5xl font-semibold leading-none ${p.categories?.gender === "boy" ? "text-white/25" : "text-coal/25"}`}>{p.name.slice(0, 1).toUpperCase()}</span>
                 <span className="chip bg-white/80">{p.categories?.name ?? "Sin categoría"}</span>

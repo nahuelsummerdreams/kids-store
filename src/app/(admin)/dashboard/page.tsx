@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase";
+import { CountUp } from "@/components/CountUp";
 
 type Sale = { total: number; discount: number; created_at: string };
 type SaleItem = { quantity: number; unit_price: number; unit_cost: number; variants: { products: { name: string } | null } | null };
@@ -9,6 +10,7 @@ type Variant = { stock: number; min_stock: number; size: string; color: string |
 
 const money = (n: number) => `$ ${Math.round(n).toLocaleString("es-AR")}`;
 const dayKey = (d: Date) => `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+const int = (n: number) => String(Math.round(n));
 const compact = (n: number) => (n >= 1000 ? `$${Math.round(n / 1000)}k` : `$${Math.round(n)}`);
 const DAYS = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
 
@@ -76,46 +78,53 @@ export default function Dashboard() {
   }, []);
 
   if (error) return <p className="text-sm text-rose-600">{error}</p>;
-  if (!d) return <div className="h-64 animate-pulse rounded-[28px] bg-white/70" />;
+  if (!d) return (
+    <div className="space-y-8">
+      <div className="skeleton h-14 w-64 rounded-2xl" />
+      <div className="skeleton h-52 rounded-[32px]" />
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">{[0, 1, 2, 3].map((i) => <div key={i} className="skeleton h-24 rounded-[24px]" />)}</div>
+      <div className="skeleton h-72 rounded-[28px]" />
+    </div>
+  );
 
   const max = Math.max(...d.week.map((w) => w.v), 1);
   const hour = new Date().getHours();
   const greet = hour < 12 ? "Buen día" : hour < 20 ? "Buenas tardes" : "Buenas noches";
   const avg = d.count ? d.month / d.count : 0;
   const small = [
-    { label: "Ventas del mes", value: String(d.count), tone: "bg-white ring-1 ring-coal/10", fg: "text-coal", sub: "text-coal/55" },
-    { label: "Ticket promedio", value: money(avg), tone: "bg-butter", fg: "text-coal", sub: "text-coal/60" },
-    { label: "Ganancia estimada", value: money(d.profit), tone: "bg-white ring-1 ring-coal/10", fg: "text-coal", sub: "text-coal/55" },
-    { label: "Stock bajo", value: String(d.lowTotal), tone: "bg-coal", fg: "text-white", sub: "text-white/60" },
+    { label: "Ventas del mes", n: d.count, fmt: int, tone: "bg-white ring-1 ring-coal/10", fg: "text-coal", sub: "text-coal/55" },
+    { label: "Ticket promedio", n: avg, fmt: money, tone: "bg-butter", fg: "text-coal", sub: "text-coal/60" },
+    { label: "Ganancia estimada", n: d.profit, fmt: money, tone: "bg-white ring-1 ring-coal/10", fg: "text-coal", sub: "text-coal/55" },
+    { label: "Stock bajo", n: d.lowTotal, fmt: int, tone: "bg-coal", fg: "text-white", sub: "text-white/60" },
   ];
 
   return (
     <section className="space-y-8">
-      <header>
+      <header className="rise">
         <p className="eyebrow">{new Date().toLocaleDateString("es-AR", { weekday: "long", day: "numeric", month: "long" })}</p>
         <h1 className="page-title mt-1">{greet} 👋</h1>
       </header>
 
-      <div className="relative overflow-hidden rounded-[32px] bg-yolk text-coal">
+      <div style={{ "--i": 1 } as React.CSSProperties} className="rise sheen relative overflow-hidden rounded-[32px] bg-yolk text-coal">
         <div className="p-7 md:p-9">
           <p className="eyebrow !text-coal/60">Facturación de hoy</p>
-          <p className="display mt-2 text-5xl font-bold md:text-7xl">{money(d.today)}</p>
-          <p className="mt-3 text-sm font-medium text-coal/70">{money(d.month)} en lo que va del mes</p>
+          <p className="display mt-2 text-5xl font-bold md:text-7xl"><CountUp value={d.today} format={money} duration={1300} /></p>
+          <p className="mt-3 text-sm font-medium text-coal/70"><CountUp value={d.month} format={money} duration={1500} /> en lo que va del mes</p>
         </div>
         <div className="hazard h-3" />
       </div>
 
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
-        {small.map((k) => (
-          <div key={k.label} className={`rounded-[24px] p-5 ${k.tone} ${k.fg}`}>
+        {small.map((k, idx) => (
+          <div key={k.label} style={{ "--i": idx + 2 } as React.CSSProperties} className={`rise lift rounded-[24px] p-5 ${k.tone} ${k.fg}`}>
             <p className={`text-xs font-medium ${k.sub}`}>{k.label}</p>
-            <p className="display mt-2 text-2xl font-semibold">{k.value}</p>
+            <p className="display mt-2 text-2xl font-semibold"><CountUp value={k.n} format={k.fmt} /></p>
           </div>
         ))}
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
-        <div className="card p-6 lg:col-span-2">
+        <div style={{ "--i": 6 } as React.CSSProperties} className="card rise p-6 lg:col-span-2">
           <h2 className="display text-lg font-semibold">Últimos 7 días</h2>
           <div className="mt-6 flex h-48 items-end gap-2 md:gap-4">
             {d.week.map((w, i) => {
@@ -124,8 +133,8 @@ export default function Dashboard() {
                 <div key={i} className="flex h-full flex-1 flex-col items-center justify-end gap-2">
                   <span className="text-[10px] text-ink/50 md:text-xs">{w.v ? compact(w.v) : ""}</span>
                   <div
-                    className={`w-full rounded-2xl transition-all ${today ? "bg-coal" : "bg-yolk"}`}
-                    style={{ height: `${Math.max((w.v / max) * 100, 3)}%` }}
+                    className={`grow w-full rounded-2xl ${today ? "bg-coal" : "bg-yolk"}`}
+                    style={{ height: `${Math.max((w.v / max) * 100, 3)}%`, "--i": i } as React.CSSProperties}
                   />
                   <span className={`text-xs ${today ? "font-semibold text-coal" : "text-ink/50"}`}>{w.label}</span>
                 </div>
@@ -135,7 +144,7 @@ export default function Dashboard() {
         </div>
 
         <div className="space-y-6">
-          <div className="card p-6">
+          <div style={{ "--i": 7 } as React.CSSProperties} className="card rise p-6">
             <h2 className="display text-lg font-semibold">Más vendidos</h2>
             <ul className="mt-4 space-y-3 text-sm">
               {d.top.length === 0 && <li className="text-ink/50">Todavía no hay ventas este mes.</li>}
@@ -148,7 +157,7 @@ export default function Dashboard() {
               ))}
             </ul>
           </div>
-          <div className="card p-6">
+          <div style={{ "--i": 8 } as React.CSSProperties} className="card rise p-6">
             <h2 className="display text-lg font-semibold">Por agotarse</h2>
             <ul className="mt-4 space-y-3 text-sm">
               {d.low.length === 0 && <li className="text-ink/50">Todo con stock suficiente. 🎉</li>}

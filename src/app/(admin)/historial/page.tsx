@@ -36,8 +36,8 @@ export default function Historial() {
       {error && <p className="text-sm text-rose-600">{error}</p>}
       {sales?.length === 0 && <p className="text-sm text-ink/55">Todavía no hay ventas.</p>}
       <div className="space-y-3">
-        {sales?.map((s) => (
-          <article key={s.id} className="card p-5">
+        {sales?.map((s, idx) => (
+          <article key={s.id} style={{ "--i": Math.min(idx, 10) } as React.CSSProperties} className="card rise lift p-5">
             <div className="flex flex-wrap justify-between gap-2">
               <span className="text-sm text-ink/55">{new Date(s.created_at).toLocaleString("es-AR", { dateStyle: "medium", timeStyle: "short" })}</span>
               <span className="font-semibold">{money(s.total)}</span>

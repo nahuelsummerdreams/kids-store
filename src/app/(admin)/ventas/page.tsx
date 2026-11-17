@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase";
+import { Confetti } from "@/components/Confetti";
 
 type Item = { id: string; sku: string; size: string; color: string | null; price: number; stock: number; products: { name: string } | null };
 type Line = { item: Item; qty: number };
@@ -23,6 +24,7 @@ export default function Ventas() {
   const [pays, setPays] = useState<Pay[]>([{ method: "cash", amount: "" }]);
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
   const [busy, setBusy] = useState(false);
+  const [fire, setFire] = useState(0);
   const [tick, setTick] = useState(0);
   const reload = useCallback(() => setTick((t) => t + 1), []);
 
@@ -70,6 +72,7 @@ export default function Ventas() {
       return setMsg({ ok: false, text: noStock ? "Alguno de los productos ya no tiene stock suficiente. Revisá el carrito." : error.message });
     }
     setMsg({ ok: true, text: `Venta registrada por ${money(total)}.` });
+    setFire((f) => f + 1);
     setCart([]); setDiscount(""); setPays([{ method: "cash", amount: "" }]); reload();
   }
 
@@ -79,11 +82,12 @@ export default function Ventas() {
 
   return (
     <section className="space-y-6">
+      <Confetti fire={fire} />
       <header>
-        <h1 className="page-title">Ventas</h1>
+        <h1 className="page-title">Vender</h1>
         <p className="page-sub">Al confirmar, el stock se descuenta solo.</p>
       </header>
-      {msg && <p className={msg.ok ? "notice-ok" : "notice-err"}>{msg.text}</p>}
+      {msg && <p key={msg.text} className={`pop ${msg.ok ? "notice-ok" : "notice-err"}`}>{msg.text}</p>}
 
       <div className="grid gap-6 lg:grid-cols-5">
         <div className="space-y-3 lg:col-span-3">
@@ -103,7 +107,7 @@ export default function Ventas() {
           <h2 className="display text-lg font-semibold">Carrito</h2>
           {cart.length === 0 && <div className="rounded-2xl bg-paper p-6 text-center text-sm text-ink/50">Tocá un producto para empezar la venta.</div>}
           {cart.map((l) => (
-            <div key={l.item.id} className="flex items-center justify-between gap-2 text-sm">
+            <div key={l.item.id} className="pop flex items-center justify-between gap-2 text-sm">
               <span className="flex-1">{label(l.item)}<br /><span className="text-ink/45">{money(Number(l.item.price))} c/u</span></span>
               <button onClick={() => setQty(l.item.id, l.qty - 1)} className="h-8 w-8 rounded-full bg-yolk hover:brightness-95">−</button>
               <span className="w-6 text-center">{l.qty}</span>
@@ -154,7 +158,7 @@ export default function Ventas() {
         </aside>
       </div>
       {cart.length > 0 && (
-        <a href="#carrito" className="fixed inset-x-4 bottom-[76px] z-30 flex items-center justify-between rounded-2xl bg-coal px-5 py-3.5 text-white shadow-lg md:hidden">
+        <a href="#carrito" className="slide-up fixed inset-x-4 bottom-[76px] z-30 flex items-center justify-between rounded-2xl bg-coal px-5 py-3.5 text-white shadow-lg md:hidden">
           <span className="text-sm">{cart.reduce((n, l) => n + l.qty, 0)} {cart.reduce((n, l) => n + l.qty, 0) === 1 ? "prenda" : "prendas"}</span>
           <span className="display text-lg font-semibold">Cobrar · {money(total)}</span>
         </a>
