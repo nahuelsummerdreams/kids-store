@@ -9,6 +9,7 @@ type Variant = { stock: number; min_stock: number; size: string; color: string |
 
 const money = (n: number) => `$ ${Math.round(n).toLocaleString("es-AR")}`;
 const dayKey = (d: Date) => `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+const compact = (n: number) => (n >= 1000 ? `$${Math.round(n / 1000)}k` : `$${Math.round(n)}`);
 const DAYS = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
 
 type Data = { today: number; month: number; count: number; profit: number; week: { label: string; v: number }[]; top: [string, number][]; low: Variant[]; lowTotal: number };
@@ -75,63 +76,87 @@ export default function Dashboard() {
   }, []);
 
   if (error) return <p className="text-sm text-rose-600">{error}</p>;
-  if (!d) return null;
+  if (!d) return <div className="h-64 animate-pulse rounded-[28px] bg-white/70" />;
 
   const max = Math.max(...d.week.map((w) => w.v), 1);
-  const kpis = [
-    { label: "Facturación hoy", value: money(d.today), tone: "bg-sky" },
-    { label: "Facturación del mes", value: money(d.month), tone: "bg-mint" },
-    { label: "Ventas del mes", value: String(d.count), tone: "bg-blush" },
-    { label: "Ticket promedio", value: money(d.count ? d.month / d.count : 0), tone: "bg-sky" },
-    { label: "Ganancia estimada del mes", value: money(d.profit), tone: "bg-mint" },
-    { label: "Productos con stock bajo", value: String(d.lowTotal), tone: "bg-blush" },
+  const hour = new Date().getHours();
+  const greet = hour < 12 ? "Buen día" : hour < 20 ? "Buenas tardes" : "Buenas noches";
+  const avg = d.count ? d.month / d.count : 0;
+  const small = [
+    { label: "Ventas del mes", value: String(d.count), tone: "bg-sky/60" },
+    { label: "Ticket promedio", value: money(avg), tone: "bg-mint/70" },
+    { label: "Ganancia estimada", value: money(d.profit), tone: "bg-sun/60" },
+    { label: "Stock bajo", value: String(d.lowTotal), tone: "bg-blush/70" },
   ];
 
   return (
     <section className="space-y-8">
       <header>
-        <h1 className="text-2xl font-semibold">Dashboard</h1>
-        <p className="mt-1 text-sm text-navy/60">Resumen en tiempo real de tu negocio.</p>
+        <p className="eyebrow">{new Date().toLocaleDateString("es-AR", { weekday: "long", day: "numeric", month: "long" })}</p>
+        <h1 className="page-title mt-1">{greet} 👋</h1>
       </header>
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-        {kpis.map((k) => (
-          <div key={k.label} className={`rounded-3xl p-5 ${k.tone}`}>
-            <p className="text-sm text-navy/70">{k.label}</p>
-            <p className="mt-2 text-2xl font-semibold">{k.value}</p>
+      <div className="relative overflow-hidden rounded-[32px] bg-navy p-7 text-white md:p-9">
+        <div className="pointer-events-none absolute -right-10 -top-10 h-56 w-56 rounded-full bg-sky/20 blur-2xl" />
+        <div className="pointer-events-none absolute -bottom-16 right-24 h-48 w-48 rounded-full bg-blush/20 blur-2xl" />
+        <p className="eyebrow !text-white/55">Facturación de hoy</p>
+        <p className="display mt-2 text-5xl font-semibold md:text-6xl">{money(d.today)}</p>
+        <p className="mt-3 text-sm text-white/65">
+          {money(d.month)} en lo que va del mes
+        </p>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
+        {small.map((k) => (
+          <div key={k.label} className={`rounded-[24px] p-5 ${k.tone}`}>
+            <p className="text-xs font-medium text-ink/60">{k.label}</p>
+            <p className="display mt-2 text-2xl font-semibold">{k.value}</p>
           </div>
         ))}
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
-        <div className="rounded-3xl bg-white p-6 shadow-sm lg:col-span-2">
-          <h2 className="font-medium">Ventas de los últimos 7 días</h2>
-          <div className="mt-6 flex h-44 items-end gap-3">
-            {d.week.map((w, i) => (
-              <div key={i} className="flex flex-1 flex-col items-center gap-1">
-                <span className="text-[11px] text-navy/60">{w.v ? money(w.v) : ""}</span>
-                <div className="w-full rounded-t-xl bg-navy/80" style={{ height: `${Math.max((w.v / max) * 100, w.v ? 4 : 1)}%` }} />
-                <span className="text-xs text-navy/60">{w.label}</span>
-              </div>
-            ))}
+        <div className="card p-6 lg:col-span-2">
+          <h2 className="display text-lg font-semibold">Últimos 7 días</h2>
+          <div className="mt-6 flex h-48 items-end gap-2 md:gap-4">
+            {d.week.map((w, i) => {
+              const today = i === d.week.length - 1;
+              return (
+                <div key={i} className="flex h-full flex-1 flex-col items-center justify-end gap-2">
+                  <span className="text-[10px] text-ink/50 md:text-xs">{w.v ? compact(w.v) : ""}</span>
+                  <div
+                    className={`w-full rounded-2xl transition-all ${today ? "bg-navy" : "bg-sky"}`}
+                    style={{ height: `${Math.max((w.v / max) * 100, 3)}%` }}
+                  />
+                  <span className={`text-xs ${today ? "font-semibold text-navy" : "text-ink/50"}`}>{w.label}</span>
+                </div>
+              );
+            })}
           </div>
         </div>
+
         <div className="space-y-6">
-          <div className="rounded-3xl bg-white p-6 shadow-sm">
-            <h2 className="font-medium">Más vendidos del mes</h2>
-            <ul className="mt-4 space-y-2 text-sm">
-              {d.top.length === 0 && <li className="text-navy/60">Sin ventas este mes.</li>}
-              {d.top.map(([n, q]) => <li key={n} className="flex justify-between gap-3"><span>{n}</span><span className="font-medium">{q} u.</span></li>)}
+          <div className="card p-6">
+            <h2 className="display text-lg font-semibold">Más vendidos</h2>
+            <ul className="mt-4 space-y-3 text-sm">
+              {d.top.length === 0 && <li className="text-ink/50">Todavía no hay ventas este mes.</li>}
+              {d.top.map(([n, q], i) => (
+                <li key={n} className="flex items-center gap-3">
+                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-sun/70 text-xs font-semibold">{i + 1}</span>
+                  <span className="flex-1 truncate">{n}</span>
+                  <span className="font-medium">{q} u.</span>
+                </li>
+              ))}
             </ul>
           </div>
-          <div className="rounded-3xl bg-white p-6 shadow-sm">
-            <h2 className="font-medium">Por agotarse</h2>
-            <ul className="mt-4 space-y-2 text-sm">
-              {d.low.length === 0 && <li className="text-navy/60">Todo con stock suficiente.</li>}
+          <div className="card p-6">
+            <h2 className="display text-lg font-semibold">Por agotarse</h2>
+            <ul className="mt-4 space-y-3 text-sm">
+              {d.low.length === 0 && <li className="text-ink/50">Todo con stock suficiente. 🎉</li>}
               {d.low.map((v, i) => (
-                <li key={i} className="flex justify-between gap-3">
-                  <span>{v.products?.name} · {v.size}{v.color ? ` ${v.color}` : ""}</span>
-                  <span className={`font-medium ${v.stock === 0 ? "text-rose-600" : ""}`}>{v.stock === 0 ? "Agotado" : v.stock}</span>
+                <li key={i} className="flex items-center justify-between gap-3">
+                  <span className="truncate">{v.products?.name} · {v.size}{v.color ? ` ${v.color}` : ""}</span>
+                  <span className={`chip ${v.stock === 0 ? "bg-rose-100 text-rose-700" : "bg-blush text-ink"}`}>{v.stock === 0 ? "Agotado" : `${v.stock} u.`}</span>
                 </li>
               ))}
             </ul>

@@ -14,7 +14,7 @@ const METHOD: Record<string, string> = {
 const KIND: Record<string, string> = { income: "Ingreso", expense: "Gasto", withdrawal: "Retiro" };
 const money = (n: number) => `$ ${n.toLocaleString("es-AR")}`;
 const when = (d: string) => new Date(d).toLocaleString("es-AR", { dateStyle: "short", timeStyle: "short" });
-const field = "rounded-2xl border border-navy/15 px-3 py-2 text-sm outline-none focus:border-navy";
+const field = "field";
 
 export default function Caja() {
   const [open, setOpen] = useState<Session | null>(null);
@@ -102,71 +102,71 @@ export default function Caja() {
   return (
     <section className="space-y-8">
       <header>
-        <h1 className="text-2xl font-semibold">Caja</h1>
-        <p className="mt-1 text-sm text-navy/60">{open ? `Abierta desde ${when(open.opened_at)}` : "Caja cerrada"}</p>
+        <h1 className="page-title">Caja</h1>
+        <p className="page-sub">{open ? `Abierta desde ${when(open.opened_at)}` : "Caja cerrada"}</p>
       </header>
       {error && <p className="rounded-2xl bg-blush p-3 text-sm">{error}</p>}
 
       {!open ? (
-        <div className="max-w-md space-y-3 rounded-3xl bg-white p-6 shadow-sm">
-          <h2 className="font-medium">Abrir caja</h2>
-          <p className="text-sm text-navy/60">Las ventas que hagas con la caja abierta quedan asociadas a ella.</p>
+        <div className="max-w-md space-y-3 card p-6">
+          <h2 className="display text-lg font-semibold">Abrir caja</h2>
+          <p className="text-sm text-ink/55">Las ventas que hagas con la caja abierta quedan asociadas a ella.</p>
           <input inputMode="decimal" value={opening} onChange={(e) => setOpening(e.target.value)} placeholder="Efectivo inicial ($)" className={`${field} w-full`} />
-          <button onClick={openCash} className="rounded-2xl bg-navy px-6 py-2.5 text-sm font-medium text-white">Abrir caja</button>
+          <button onClick={openCash} className="btn btn-primary">Abrir caja</button>
         </div>
       ) : (
         <>
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-            <div className="rounded-3xl bg-mint p-5"><p className="text-sm text-navy/70">Efectivo esperado</p><p className="mt-2 text-2xl font-semibold">{money(expected)}</p></div>
-            <div className="rounded-3xl bg-sky p-5"><p className="text-sm text-navy/70">Ventas del turno</p><p className="mt-2 text-2xl font-semibold">{money(totalSales)}</p></div>
-            <div className="rounded-3xl bg-white p-5 shadow-sm"><p className="text-sm text-navy/70">Efectivo inicial</p><p className="mt-2 text-2xl font-semibold">{money(Number(open.opening_amount))}</p></div>
-            <div className="rounded-3xl bg-blush p-5"><p className="text-sm text-navy/70">Gastos y retiros</p><p className="mt-2 text-2xl font-semibold">{money(sumKind("expense") + sumKind("withdrawal"))}</p></div>
+            <div className="rounded-[24px] bg-mint/70 p-5"><p className="text-sm text-ink/60">Efectivo esperado</p><p className="mt-2 text-2xl font-semibold">{money(expected)}</p></div>
+            <div className="rounded-[24px] bg-sky/70 p-5"><p className="text-sm text-ink/60">Ventas del turno</p><p className="mt-2 text-2xl font-semibold">{money(totalSales)}</p></div>
+            <div className="card p-5"><p className="text-sm text-ink/60">Efectivo inicial</p><p className="mt-2 text-2xl font-semibold">{money(Number(open.opening_amount))}</p></div>
+            <div className="rounded-[24px] bg-blush/70 p-5"><p className="text-sm text-ink/60">Gastos y retiros</p><p className="mt-2 text-2xl font-semibold">{money(sumKind("expense") + sumKind("withdrawal"))}</p></div>
           </div>
 
           <div className="grid gap-6 lg:grid-cols-2">
-            <div className="space-y-4 rounded-3xl bg-white p-6 shadow-sm">
-              <h2 className="font-medium">Ventas por medio de pago</h2>
+            <div className="space-y-4 card p-6">
+              <h2 className="display text-lg font-semibold">Ventas por medio de pago</h2>
               <ul className="space-y-1 text-sm">
-                {Object.keys(byMethod).length === 0 && <li className="text-navy/60">Sin ventas todavía.</li>}
+                {Object.keys(byMethod).length === 0 && <li className="text-ink/55">Sin ventas todavía.</li>}
                 {Object.entries(byMethod).map(([m, v]) => <li key={m} className="flex justify-between"><span>{METHOD[m] ?? m}</span><span>{money(v)}</span></li>)}
               </ul>
-              <h2 className="pt-2 font-medium">Movimientos manuales</h2>
+              <h2 className="display pt-2 text-lg font-semibold">Movimientos manuales</h2>
               <div className="flex flex-wrap gap-2">
                 <select value={kind} onChange={(e) => setKind(e.target.value as Move["kind"])} className={field}>
                   <option value="expense">Gasto</option><option value="income">Ingreso</option><option value="withdrawal">Retiro</option>
                 </select>
                 <input inputMode="decimal" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="Monto" className={`${field} w-28`} />
                 <input value={note} onChange={(e) => setNote(e.target.value)} placeholder="Detalle (opcional)" className={`${field} min-w-40 flex-1`} />
-                <button onClick={addMove} className="rounded-2xl bg-sky px-4 py-2 text-sm">Agregar</button>
+                <button onClick={addMove} className="btn btn-soft !px-4 !py-1.5">Agregar</button>
               </div>
               <ul className="space-y-1 text-sm">
                 {moves.map((m) => (
                   <li key={m.id} className="flex justify-between gap-2">
                     <span><span className={m.kind === "income" ? "text-emerald-700" : "text-rose-600"}>{m.kind === "income" ? "+" : "−"}{money(Number(m.amount))}</span> {KIND[m.kind]}{m.note ? ` · ${m.note}` : ""}</span>
-                    <span className="text-navy/50">{when(m.created_at)}</span>
+                    <span className="text-ink/45">{when(m.created_at)}</span>
                   </li>
                 ))}
               </ul>
             </div>
 
-            <div className="space-y-3 rounded-3xl bg-white p-6 shadow-sm">
-              <h2 className="font-medium">Cerrar caja</h2>
-              <p className="text-sm text-navy/60">Contá el efectivo que hay en la caja y escribilo. El sistema calcula la diferencia.</p>
+            <div className="space-y-3 card p-6">
+              <h2 className="display text-lg font-semibold">Cerrar caja</h2>
+              <p className="text-sm text-ink/55">Contá el efectivo que hay en la caja y escribilo. El sistema calcula la diferencia.</p>
               <input inputMode="decimal" value={counted} onChange={(e) => setCounted(e.target.value)} placeholder="Efectivo contado ($)" className={`${field} w-full`} />
               {diff !== null && (
                 <p className={`text-sm ${Math.abs(diff) < 0.005 ? "text-emerald-700" : "text-rose-600"}`}>
                   {Math.abs(diff) < 0.005 ? "La caja cierra justa." : diff > 0 ? `Sobran ${money(diff)}` : `Faltan ${money(-diff)}`}
                 </p>
               )}
-              <button onClick={closeCash} className="rounded-2xl bg-navy px-6 py-2.5 text-sm font-medium text-white">Cerrar caja</button>
+              <button onClick={closeCash} className="btn btn-primary">Cerrar caja</button>
             </div>
           </div>
         </>
       )}
 
       {history.length > 0 && (
-        <div className="rounded-3xl bg-white p-6 shadow-sm">
-          <h2 className="font-medium">Cierres anteriores</h2>
+        <div className="card p-6">
+          <h2 className="display text-lg font-semibold">Cierres anteriores</h2>
           <ul className="mt-3 space-y-2 text-sm">
             {history.map((h) => {
               const d = Number(h.counted_amount ?? 0) - Number(h.expected_amount ?? 0);

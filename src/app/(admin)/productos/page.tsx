@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase";
 import { ProductForm, type Category } from "@/components/ProductForm";
 
 type Variant = { id: string; size: string; color: string | null; price: number; stock: number; min_stock: number };
-type Product = { id: string; name: string; brand: string | null; categories: { name: string } | null; variants: Variant[] };
+type Product = { id: string; name: string; brand: string | null; categories: { name: string; gender: string | null } | null; variants: Variant[] };
 
 const money = (n: number) => `$ ${n.toLocaleString("es-AR")}`;
 
@@ -23,7 +23,7 @@ export default function Productos() {
     (async () => {
       const supabase = createClient();
       const [p, c] = await Promise.all([
-        supabase.from("products").select("id,name,brand,categories(name),variants(id,size,color,price,stock,min_stock)")
+        supabase.from("products").select("id,name,brand,categories(name,gender),variants(id,size,color,price,stock,min_stock)")
           .order("created_at", { ascending: false }).returns<Product[]>(),
         supabase.from("categories").select("id,name,parent_id").order("name").returns<Category[]>(),
       ]);
@@ -38,8 +38,8 @@ export default function Productos() {
   return (
     <section className="space-y-8">
       <header>
-        <h1 className="text-2xl font-semibold">Productos</h1>
-        <p className="mt-1 text-sm text-navy/60">Cada talle y color tiene su propio stock.</p>
+        <h1 className="page-title">Productos</h1>
+        <p className="page-sub">Cada talle y color tiene su propio stock.</p>
       </header>
 
       <ProductForm categories={categories} onCreated={reload} />
@@ -47,27 +47,37 @@ export default function Productos() {
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {!loading && products.length === 0 && (
-          <p className="text-sm text-navy/60">Todavía no cargaste productos.</p>
+          <div className="card col-span-full p-10 text-center">
+            <p className="display text-xl font-semibold">Todavía no cargaste productos</p>
+            <p className="page-sub">Usá el formulario de arriba: elegí talles y colores y se crean todas las variantes.</p>
+          </div>
         )}
         {products.map((p) => {
           const stock = p.variants.reduce((s, v) => s + v.stock, 0);
           const low = p.variants.filter((v) => v.stock <= v.min_stock).length;
           const prices = p.variants.map((v) => Number(v.price));
+          const tone = ({ baby: "bg-mint", girl: "bg-blush", boy: "bg-sky", unisex: "bg-sun" } as Record<string, string>)[p.categories?.gender ?? ""] ?? "bg-ink/5";
           return (
-            <article key={p.id} className="rounded-3xl bg-white p-5 shadow-sm">
-              <p className="text-xs text-navy/50">{p.categories?.name ?? "Sin categoría"}{p.brand ? ` · ${p.brand}` : ""}</p>
-              <h3 className="mt-1 font-medium">{p.name}</h3>
-              <p className="mt-2 text-sm">
-                {prices.length ? (Math.min(...prices) === Math.max(...prices) ? money(prices[0]) : `${money(Math.min(...prices))} – ${money(Math.max(...prices))}`) : "—"}
-              </p>
-              <div className="mt-3 flex flex-wrap gap-1.5">
-                {p.variants.map((v) => (
-                  <span key={v.id} className={`rounded-full px-2.5 py-1 text-xs ${v.stock <= v.min_stock ? "bg-blush" : "bg-mint"}`}>
-                    {v.size}{v.color ? ` ${v.color}` : ""} · {v.stock}
-                  </span>
-                ))}
+            <article key={p.id} className="card overflow-hidden">
+              <div className={`flex h-28 items-end justify-between p-4 ${tone}`}>
+                <span className="display text-5xl font-semibold leading-none text-ink/25">{p.name.slice(0, 1).toUpperCase()}</span>
+                <span className="chip bg-white/80">{p.categories?.name ?? "Sin categoría"}</span>
               </div>
-              <p className="mt-3 text-xs text-navy/60">{stock} unidades{low ? ` · ${low} con stock bajo` : ""}</p>
+              <div className="p-5">
+                <h3 className="display text-lg font-semibold leading-tight">{p.name}</h3>
+                {p.brand && <p className="text-xs text-ink/45">{p.brand}</p>}
+                <p className="mt-2 text-sm font-medium">
+                  {prices.length ? (Math.min(...prices) === Math.max(...prices) ? money(prices[0]) : `${money(Math.min(...prices))} – ${money(Math.max(...prices))}`) : "—"}
+                </p>
+                <div className="mt-3 flex flex-wrap gap-1.5">
+                  {p.variants.map((v) => (
+                    <span key={v.id} className={`chip ${v.stock === 0 ? "bg-rose-100 text-rose-700" : v.stock <= v.min_stock ? "bg-blush" : "bg-mint"}`}>
+                      {v.size}{v.color ? ` ${v.color}` : ""} · {v.stock}
+                    </span>
+                  ))}
+                </div>
+                <p className="mt-3 text-xs text-ink/55">{stock} unidades{low ? ` · ${low} con stock bajo` : ""}</p>
+              </div>
             </article>
           );
         })}

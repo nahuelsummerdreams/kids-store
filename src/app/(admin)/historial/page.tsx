@@ -30,24 +30,24 @@ export default function Historial() {
   return (
     <section className="space-y-6">
       <header>
-        <h1 className="text-2xl font-semibold">Historial de ventas</h1>
-        <p className="mt-1 text-sm text-navy/60">Las últimas 50 ventas.</p>
+        <h1 className="page-title">Historial de ventas</h1>
+        <p className="page-sub">Las últimas 50 ventas.</p>
       </header>
       {error && <p className="text-sm text-rose-600">{error}</p>}
-      {sales?.length === 0 && <p className="text-sm text-navy/60">Todavía no hay ventas.</p>}
+      {sales?.length === 0 && <p className="text-sm text-ink/55">Todavía no hay ventas.</p>}
       <div className="space-y-3">
         {sales?.map((s) => (
-          <article key={s.id} className="rounded-3xl bg-white p-5 shadow-sm">
+          <article key={s.id} className="card p-5">
             <div className="flex flex-wrap justify-between gap-2">
-              <span className="text-sm text-navy/60">{new Date(s.created_at).toLocaleString("es-AR", { dateStyle: "medium", timeStyle: "short" })}</span>
+              <span className="text-sm text-ink/55">{new Date(s.created_at).toLocaleString("es-AR", { dateStyle: "medium", timeStyle: "short" })}</span>
               <span className="font-semibold">{money(s.total)}</span>
             </div>
             <ul className="mt-3 space-y-1 text-sm">
               {s.sale_items.map((i, k) => (
-                <li key={k}>{i.quantity} × {i.variants?.products?.name} · {i.variants?.size}{i.variants?.color ? ` ${i.variants.color}` : ""} <span className="text-navy/50">({money(i.unit_price)} c/u)</span></li>
+                <li key={k}>{i.quantity} × {i.variants?.products?.name} · {i.variants?.size}{i.variants?.color ? ` ${i.variants.color}` : ""} <span className="text-ink/45">({money(i.unit_price)} c/u)</span></li>
               ))}
             </ul>
-            <p className="mt-3 text-xs text-navy/60">
+            <p className="mt-3 text-xs text-ink/55">
               {s.payments.map((p) => `${METHOD[p.method] ?? p.method} ${money(p.amount)}`).join(" · ")}
               {Number(s.discount) > 0 ? ` · Descuento ${money(s.discount)}` : ""}
             </p>

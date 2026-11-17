@@ -1,8 +1,10 @@
+import { IconBoxes, IconCart, IconHome, IconReceipt, IconTag, IconWallet } from "@/components/Icons";
+
 export const NAV = [
-  { href: "/dashboard", label: "Dashboard", phase: 1 },
-  { href: "/productos", label: "Productos", phase: 1 },
-  { href: "/inventario", label: "Inventario", phase: 1 },
-  { href: "/ventas", label: "Ventas (POS)", phase: 1 },
-  { href: "/historial", label: "Historial de ventas", phase: 1 },
-  { href: "/caja", label: "Caja", phase: 1 },
+  { href: "/dashboard", label: "Inicio", Icon: IconHome },
+  { href: "/ventas", label: "Vender", Icon: IconCart },
+  { href: "/productos", label: "Productos", Icon: IconTag },
+  { href: "/inventario", label: "Inventario", Icon: IconBoxes },
+  { href: "/historial", label: "Ventas", Icon: IconReceipt },
+  { href: "/caja", label: "Caja", Icon: IconWallet },
 ] as const;

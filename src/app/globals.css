@@ -1,25 +1,53 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f6f9fc;
-  --foreground: #0f2340;
-  --navy: #0f2340;
-  --sky: #cfe8fb;
-  --mint: #d3efe0;
-  --blush: #fbdce8;
+  --paper: #f6f8fc;
+  --ink: #0e1b33;
+  --navy: #14284b;
+  --sky: #c3e4f9;
+  --mint: #cfeedd;
+  --blush: #fad6e4;
+  --sun: #fbe8a6;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-paper: var(--paper);
+  --color-ink: var(--ink);
   --color-navy: var(--navy);
   --color-sky: var(--sky);
   --color-mint: var(--mint);
   --color-blush: var(--blush);
+  --color-sun: var(--sun);
   --font-sans: var(--font-geist-sans);
+  --font-display: var(--font-display);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--paper);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+@utility display {
+  font-family: var(--font-display), var(--font-geist-sans), sans-serif;
+  letter-spacing: -0.02em;
+}
+
+@layer components {
+  .eyebrow { @apply text-[11px] font-semibold uppercase tracking-[0.14em] text-ink/45; }
+  .card {
+    @apply rounded-[28px] bg-white ring-1 ring-ink/5;
+    box-shadow: 0 1px 2px rgba(14, 27, 51, 0.04), 0 12px 28px -16px rgba(14, 27, 51, 0.14);
+  }
+  .field {
+    @apply rounded-2xl border border-ink/10 bg-white px-4 py-2.5 text-sm outline-none transition placeholder:text-ink/40 focus:border-navy focus:ring-4 focus:ring-sky/70;
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-2xl px-5 py-2.5 text-sm font-medium transition active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-primary { @apply bg-navy text-white hover:bg-ink; }
+  .btn-soft { @apply bg-sky/70 text-navy hover:bg-sky; }
+  .chip { @apply inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium; }
+  .page-title { @apply display text-3xl font-semibold text-ink md:text-4xl; }
+  .page-sub { @apply mt-1.5 text-sm text-ink/55; }
 }

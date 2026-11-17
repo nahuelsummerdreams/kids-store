@@ -12,7 +12,7 @@ const SEASONS = [
 
 const list = (s: string) => s.split(",").map((x) => x.trim()).filter(Boolean);
 const code = (s: string) => s.normalize("NFD").replace(/[^a-zA-Z0-9]/g, "").toUpperCase().slice(0, 4);
-const input = "w-full rounded-2xl border border-navy/15 px-4 py-2.5 text-sm outline-none focus:border-navy";
+const input = "field w-full";
 
 export function ProductForm({ categories, onCreated }: { categories: Category[]; onCreated: () => void }) {
   const [f, setF] = useState({
@@ -76,8 +76,8 @@ export function ProductForm({ categories, onCreated }: { categories: Category[];
   }
 
   return (
-    <form onSubmit={submit} className="space-y-4 rounded-3xl bg-white p-6 shadow-sm">
-      <h2 className="font-medium">Nuevo producto</h2>
+    <form onSubmit={submit} className="space-y-4 card p-6">
+      <h2 className="display text-lg font-semibold">Nuevo producto</h2>
       <div className="grid gap-3 sm:grid-cols-2">
         <input required placeholder="Nombre (ej. Buzo canguro)" value={f.name} onChange={set("name")} className={input} />
         <select value={f.categoryId} onChange={set("categoryId")} className={input}>
@@ -99,14 +99,14 @@ export function ProductForm({ categories, onCreated }: { categories: Category[];
         <input inputMode="decimal" placeholder="Precio de compra" value={f.cost} onChange={set("cost")} className={input} />
         <input required placeholder="Talles separados por coma (ej. 2, 4, 6)" value={f.sizes} onChange={set("sizes")} className={input} />
         <input placeholder="Colores separados por coma (opcional)" value={f.colors} onChange={set("colors")} className={input} />
-        <input inputMode="numeric" placeholder="Stock inicial por variante" value={f.stock} onChange={set("stock")} className={input} />
-        <input inputMode="numeric" placeholder="Stock mínimo" value={f.minStock} onChange={set("minStock")} className={input} />
+        <label className="space-y-1"><span className="text-xs text-ink/55">Stock inicial por variante</span><input inputMode="numeric" value={f.stock} onChange={set("stock")} className={input} /></label>
+        <label className="space-y-1"><span className="text-xs text-ink/55">Avisar cuando queden (stock mínimo)</span><input inputMode="numeric" value={f.minStock} onChange={set("minStock")} className={input} /></label>
       </div>
       {sizes.length > 0 && (
-        <p className="text-sm text-navy/60">Se crearán {combos} variantes ({sizes.length} talles × {Math.max(colors.length, 1)} colores).</p>
+        <p className="text-sm text-ink/55">Se crearán {combos} variantes ({sizes.length} talles × {Math.max(colors.length, 1)} colores).</p>
       )}
       {error && <p className="text-sm text-rose-600">{error}</p>}
-      <button disabled={saving} className="rounded-2xl bg-navy px-6 py-2.5 text-sm font-medium text-white disabled:opacity-60">
+      <button disabled={saving} className="btn btn-primary">
         {saving ? "Guardando…" : "Guardar producto"}
       </button>
     </form>

@@ -13,7 +13,7 @@ const METHODS: [string, string][] = [
 ];
 const money = (n: number) => `$ ${n.toLocaleString("es-AR")}`;
 const label = (i: Item) => `${i.products?.name} · ${i.size}${i.color ? ` ${i.color}` : ""}`;
-const field = "rounded-2xl border border-navy/15 px-3 py-2 text-sm outline-none focus:border-navy";
+const field = "field";
 
 export default function Ventas() {
   const [items, setItems] = useState<Item[]>([]);
@@ -80,8 +80,8 @@ export default function Ventas() {
   return (
     <section className="space-y-6">
       <header>
-        <h1 className="text-2xl font-semibold">Ventas</h1>
-        <p className="mt-1 text-sm text-navy/60">Al confirmar, el stock se descuenta solo.</p>
+        <h1 className="page-title">Ventas</h1>
+        <p className="page-sub">Al confirmar, el stock se descuenta solo.</p>
       </header>
       {msg && <p className={`rounded-2xl p-3 text-sm ${msg.ok ? "bg-mint" : "bg-blush"}`}>{msg.text}</p>}
 
@@ -89,38 +89,38 @@ export default function Ventas() {
         <div className="space-y-3 lg:col-span-3">
           <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Buscar producto, talle, color o SKU…" className={`${field} w-full`} />
           <div className="grid gap-2 sm:grid-cols-2">
-            {shown.length === 0 && <p className="text-sm text-navy/60">No hay productos con stock.</p>}
+            {shown.length === 0 && <p className="text-sm text-ink/55">No hay productos con stock.</p>}
             {shown.map((i) => (
-              <button key={i.id} onClick={() => add(i)} className="rounded-3xl bg-white p-4 text-left shadow-sm transition hover:bg-sky/40">
+              <button key={i.id} onClick={() => add(i)} className="card p-4 text-left transition hover:-translate-y-0.5 hover:ring-sky">
                 <p className="text-sm font-medium">{label(i)}</p>
-                <p className="mt-1 text-sm">{money(Number(i.price))} <span className="text-navy/50">· {i.stock} disp.</span></p>
+                <p className="mt-1 text-sm">{money(Number(i.price))} <span className="text-ink/45">· {i.stock} disp.</span></p>
               </button>
             ))}
           </div>
         </div>
 
-        <aside className="space-y-4 rounded-3xl bg-white p-5 shadow-sm lg:col-span-2">
-          <h2 className="font-medium">Carrito</h2>
-          {cart.length === 0 && <p className="text-sm text-navy/60">Tocá un producto para agregarlo.</p>}
+        <aside id="carrito" className="card scroll-mt-20 space-y-4 p-5 lg:sticky lg:top-6 lg:col-span-2 lg:self-start">
+          <h2 className="display text-lg font-semibold">Carrito</h2>
+          {cart.length === 0 && <div className="rounded-2xl bg-paper p-6 text-center text-sm text-ink/50">Tocá un producto para empezar la venta.</div>}
           {cart.map((l) => (
             <div key={l.item.id} className="flex items-center justify-between gap-2 text-sm">
-              <span className="flex-1">{label(l.item)}<br /><span className="text-navy/50">{money(Number(l.item.price))} c/u</span></span>
-              <button onClick={() => setQty(l.item.id, l.qty - 1)} className="h-8 w-8 rounded-full bg-sky">−</button>
+              <span className="flex-1">{label(l.item)}<br /><span className="text-ink/45">{money(Number(l.item.price))} c/u</span></span>
+              <button onClick={() => setQty(l.item.id, l.qty - 1)} className="h-8 w-8 rounded-full bg-sky/70 hover:bg-sky">−</button>
               <span className="w-6 text-center">{l.qty}</span>
-              <button onClick={() => setQty(l.item.id, l.qty + 1)} disabled={l.qty >= l.item.stock} className="h-8 w-8 rounded-full bg-sky disabled:opacity-40">+</button>
+              <button onClick={() => setQty(l.item.id, l.qty + 1)} disabled={l.qty >= l.item.stock} className="h-8 w-8 rounded-full bg-sky/70 hover:bg-sky disabled:opacity-40">+</button>
             </div>
           ))}
 
           {cart.length > 0 && (
             <>
               <input inputMode="decimal" value={discount} onChange={(e) => setDiscount(e.target.value)} placeholder="Descuento ($)" className={`${field} w-full`} />
-              <div className="space-y-2 border-t border-navy/10 pt-3 text-sm">
+              <div className="space-y-2 border-t border-ink/10 pt-3 text-sm">
                 <div className="flex justify-between"><span>Subtotal</span><span>{money(subtotal)}</span></div>
                 {disc > 0 && <div className="flex justify-between"><span>Descuento</span><span>− {money(disc)}</span></div>}
                 <div className="flex justify-between text-lg font-semibold"><span>Total</span><span>{money(total)}</span></div>
               </div>
 
-              <div className="space-y-2 border-t border-navy/10 pt-3">
+              <div className="space-y-2 border-t border-ink/10 pt-3">
                 <p className="text-sm font-medium">Pago</p>
                 {pays.map((p, idx) => (
                   <div key={idx} className="flex gap-2">
@@ -131,12 +131,12 @@ export default function Ventas() {
                       <>
                         <input inputMode="decimal" value={p.amount} placeholder="Monto"
                           onChange={(e) => setPays(pays.map((x, j) => (j === idx ? { ...x, amount: e.target.value } : x)))} className={`${field} w-28`} />
-                        <button onClick={() => setPays(pays.filter((_, j) => j !== idx))} className="px-2 text-navy/50">✕</button>
+                        <button onClick={() => setPays(pays.filter((_, j) => j !== idx))} className="px-2 text-ink/45">✕</button>
                       </>
                     )}
                   </div>
                 ))}
-                <button onClick={() => setPays([...pays, { method: "transfer", amount: "" }])} className="text-sm text-navy/70 underline">
+                <button onClick={() => setPays([...pays, { method: "transfer", amount: "" }])} className="text-sm text-ink/60 underline">
                   + Combinar medios de pago
                 </button>
                 {pays.length > 1 && (
@@ -146,13 +146,19 @@ export default function Ventas() {
                 )}
               </div>
 
-              <button onClick={confirm} disabled={!canConfirm} className="w-full rounded-2xl bg-navy py-3 text-sm font-medium text-white disabled:opacity-50">
+              <button onClick={confirm} disabled={!canConfirm} className="btn btn-primary w-full py-3">
                 {busy ? "Registrando…" : `Confirmar venta · ${money(total)}`}
               </button>
             </>
           )}
         </aside>
       </div>
+      {cart.length > 0 && (
+        <a href="#carrito" className="fixed inset-x-4 bottom-[76px] z-30 flex items-center justify-between rounded-2xl bg-navy px-5 py-3.5 text-white shadow-lg md:hidden">
+          <span className="text-sm">{cart.reduce((n, l) => n + l.qty, 0)} {cart.reduce((n, l) => n + l.qty, 0) === 1 ? "prenda" : "prendas"}</span>
+          <span className="display text-lg font-semibold">Cobrar · {money(total)}</span>
+        </a>
+      )}
     </section>
   );
 }
