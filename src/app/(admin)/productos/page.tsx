@@ -56,11 +56,11 @@ export default function Productos() {
           const stock = p.variants.reduce((s, v) => s + v.stock, 0);
           const low = p.variants.filter((v) => v.stock <= v.min_stock).length;
           const prices = p.variants.map((v) => Number(v.price));
-          const tone = ({ baby: "bg-mint", girl: "bg-blush", boy: "bg-sky", unisex: "bg-sun" } as Record<string, string>)[p.categories?.gender ?? ""] ?? "bg-ink/5";
+          const tone = ({ baby: "bg-butter", girl: "bg-yolk", boy: "bg-coal", unisex: "bg-white" } as Record<string, string>)[p.categories?.gender ?? ""] ?? "bg-coal/5";
           return (
             <article key={p.id} className="card overflow-hidden">
               <div className={`flex h-28 items-end justify-between p-4 ${tone}`}>
-                <span className="display text-5xl font-semibold leading-none text-ink/25">{p.name.slice(0, 1).toUpperCase()}</span>
+                <span className={`display text-5xl font-semibold leading-none ${p.categories?.gender === "boy" ? "text-white/25" : "text-coal/25"}`}>{p.name.slice(0, 1).toUpperCase()}</span>
                 <span className="chip bg-white/80">{p.categories?.name ?? "Sin categoría"}</span>
               </div>
               <div className="p-5">
@@ -71,7 +71,7 @@ export default function Productos() {
                 </p>
                 <div className="mt-3 flex flex-wrap gap-1.5">
                   {p.variants.map((v) => (
-                    <span key={v.id} className={`chip ${v.stock === 0 ? "bg-rose-100 text-rose-700" : v.stock <= v.min_stock ? "bg-blush" : "bg-mint"}`}>
+                    <span key={v.id} className={`chip ${v.stock === 0 ? "stock-out" : v.stock <= v.min_stock ? "stock-low" : "stock-ok"}`}>
                       {v.size}{v.color ? ` ${v.color}` : ""} · {v.stock}
                     </span>
                   ))}

@@ -1,23 +1,19 @@
 @import "tailwindcss";
 
 :root {
-  --paper: #f6f8fc;
-  --ink: #0e1b33;
-  --navy: #14284b;
-  --sky: #c3e4f9;
-  --mint: #cfeedd;
-  --blush: #fad6e4;
-  --sun: #fbe8a6;
+  --paper: #fbfaf3;
+  --ink: #0b0b0b;
+  --coal: #0b0b0b;
+  --yolk: #fce408;
+  --butter: #fff4a6;
 }
 
 @theme inline {
   --color-paper: var(--paper);
   --color-ink: var(--ink);
-  --color-navy: var(--navy);
-  --color-sky: var(--sky);
-  --color-mint: var(--mint);
-  --color-blush: var(--blush);
-  --color-sun: var(--sun);
+  --color-coal: var(--coal);
+  --color-yolk: var(--yolk);
+  --color-butter: var(--butter);
   --font-sans: var(--font-geist-sans);
   --font-display: var(--font-display);
 }
@@ -40,14 +36,20 @@ body {
     box-shadow: 0 1px 2px rgba(14, 27, 51, 0.04), 0 12px 28px -16px rgba(14, 27, 51, 0.14);
   }
   .field {
-    @apply rounded-2xl border border-ink/10 bg-white px-4 py-2.5 text-sm outline-none transition placeholder:text-ink/40 focus:border-navy focus:ring-4 focus:ring-sky/70;
+    @apply rounded-2xl border border-ink/10 bg-white px-4 py-2.5 text-sm outline-none transition placeholder:text-ink/40 focus:border-coal focus:ring-4 focus:ring-yolk/60;
   }
   .btn {
     @apply inline-flex items-center justify-center gap-2 rounded-2xl px-5 py-2.5 text-sm font-medium transition active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50;
   }
-  .btn-primary { @apply bg-navy text-white hover:bg-ink; }
-  .btn-soft { @apply bg-sky/70 text-navy hover:bg-sky; }
+  .btn-primary { @apply bg-coal text-white hover:bg-coal/85; }
+  .btn-soft { @apply bg-yolk text-coal hover:brightness-95; }
   .chip { @apply inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium; }
   .page-title { @apply display text-3xl font-semibold text-ink md:text-4xl; }
   .page-sub { @apply mt-1.5 text-sm text-ink/55; }
+  .stock-ok { @apply bg-coal/[0.07] text-coal; }
+  .stock-low { @apply bg-yolk text-coal; }
+  .stock-out { @apply bg-coal text-white; }
+  .notice-ok { @apply rounded-2xl bg-butter px-4 py-3 text-sm text-coal; }
+  .notice-err { @apply rounded-2xl bg-rose-50 px-4 py-3 text-sm text-rose-700; }
+  .hazard { background: repeating-linear-gradient(-45deg, var(--coal) 0 12px, var(--yolk) 12px 24px); }
 }

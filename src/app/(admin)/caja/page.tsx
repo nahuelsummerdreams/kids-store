@@ -105,7 +105,7 @@ export default function Caja() {
         <h1 className="page-title">Caja</h1>
         <p className="page-sub">{open ? `Abierta desde ${when(open.opened_at)}` : "Caja cerrada"}</p>
       </header>
-      {error && <p className="rounded-2xl bg-blush p-3 text-sm">{error}</p>}
+      {error && <p className="notice-err">{error}</p>}
 
       {!open ? (
         <div className="max-w-md space-y-3 card p-6">
@@ -117,10 +117,10 @@ export default function Caja() {
       ) : (
         <>
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-            <div className="rounded-[24px] bg-mint/70 p-5"><p className="text-sm text-ink/60">Efectivo esperado</p><p className="mt-2 text-2xl font-semibold">{money(expected)}</p></div>
-            <div className="rounded-[24px] bg-sky/70 p-5"><p className="text-sm text-ink/60">Ventas del turno</p><p className="mt-2 text-2xl font-semibold">{money(totalSales)}</p></div>
+            <div className="rounded-[24px] bg-yolk p-5"><p className="text-sm text-coal/70">Efectivo esperado</p><p className="mt-2 text-2xl font-semibold">{money(expected)}</p></div>
+            <div className="rounded-[24px] bg-butter p-5"><p className="text-sm text-coal/70">Ventas del turno</p><p className="mt-2 text-2xl font-semibold">{money(totalSales)}</p></div>
             <div className="card p-5"><p className="text-sm text-ink/60">Efectivo inicial</p><p className="mt-2 text-2xl font-semibold">{money(Number(open.opening_amount))}</p></div>
-            <div className="rounded-[24px] bg-blush/70 p-5"><p className="text-sm text-ink/60">Gastos y retiros</p><p className="mt-2 text-2xl font-semibold">{money(sumKind("expense") + sumKind("withdrawal"))}</p></div>
+            <div className="rounded-[24px] bg-coal p-5 text-white"><p className="text-sm text-white/65">Gastos y retiros</p><p className="mt-2 text-2xl font-semibold">{money(sumKind("expense") + sumKind("withdrawal"))}</p></div>
           </div>
 
           <div className="grid gap-6 lg:grid-cols-2">

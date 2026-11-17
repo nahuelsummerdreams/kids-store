@@ -90,7 +90,7 @@ export default function Inventario() {
                 <p className="text-xs text-ink/45">{r.sku}</p>
               </div>
               <div className="flex items-center gap-3">
-                <span className={`rounded-full px-3 py-1 text-sm ${r.stock === 0 ? "bg-rose-200" : r.stock <= r.min_stock ? "bg-blush" : "bg-mint"}`}>
+                <span className={`rounded-full px-3 py-1 text-sm ${r.stock === 0 ? "stock-out" : r.stock <= r.min_stock ? "stock-low" : "stock-ok"}`}>
                   {r.stock === 0 ? "Agotado" : `${r.stock} u.`}
                 </span>
                 <button onClick={() => { setOpen(open === r.id ? null : r.id); setError(null); setQty(""); setKind("in"); }}

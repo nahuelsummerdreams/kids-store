@@ -6,11 +6,11 @@ const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const display = Bricolage_Grotesque({ variable: "--font-display", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Kids Store · Digital Studio",
-  description: "Gestioná tu tienda de indumentaria infantil y hacela crecer.",
+  title: "Toxic Kids · Panel",
+  description: "Panel de gestión de Toxic Kids.",
 };
 
-export const viewport: Viewport = { themeColor: "#14284b" };
+export const viewport: Viewport = { themeColor: "#0b0b0b" };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (

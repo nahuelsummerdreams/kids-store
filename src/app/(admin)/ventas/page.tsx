@@ -83,7 +83,7 @@ export default function Ventas() {
         <h1 className="page-title">Ventas</h1>
         <p className="page-sub">Al confirmar, el stock se descuenta solo.</p>
       </header>
-      {msg && <p className={`rounded-2xl p-3 text-sm ${msg.ok ? "bg-mint" : "bg-blush"}`}>{msg.text}</p>}
+      {msg && <p className={msg.ok ? "notice-ok" : "notice-err"}>{msg.text}</p>}
 
       <div className="grid gap-6 lg:grid-cols-5">
         <div className="space-y-3 lg:col-span-3">
@@ -91,7 +91,7 @@ export default function Ventas() {
           <div className="grid gap-2 sm:grid-cols-2">
             {shown.length === 0 && <p className="text-sm text-ink/55">No hay productos con stock.</p>}
             {shown.map((i) => (
-              <button key={i.id} onClick={() => add(i)} className="card p-4 text-left transition hover:-translate-y-0.5 hover:ring-sky">
+              <button key={i.id} onClick={() => add(i)} className="card p-4 text-left transition hover:-translate-y-0.5 hover:ring-yolk">
                 <p className="text-sm font-medium">{label(i)}</p>
                 <p className="mt-1 text-sm">{money(Number(i.price))} <span className="text-ink/45">· {i.stock} disp.</span></p>
               </button>
@@ -105,9 +105,9 @@ export default function Ventas() {
           {cart.map((l) => (
             <div key={l.item.id} className="flex items-center justify-between gap-2 text-sm">
               <span className="flex-1">{label(l.item)}<br /><span className="text-ink/45">{money(Number(l.item.price))} c/u</span></span>
-              <button onClick={() => setQty(l.item.id, l.qty - 1)} className="h-8 w-8 rounded-full bg-sky/70 hover:bg-sky">−</button>
+              <button onClick={() => setQty(l.item.id, l.qty - 1)} className="h-8 w-8 rounded-full bg-yolk hover:brightness-95">−</button>
               <span className="w-6 text-center">{l.qty}</span>
-              <button onClick={() => setQty(l.item.id, l.qty + 1)} disabled={l.qty >= l.item.stock} className="h-8 w-8 rounded-full bg-sky/70 hover:bg-sky disabled:opacity-40">+</button>
+              <button onClick={() => setQty(l.item.id, l.qty + 1)} disabled={l.qty >= l.item.stock} className="h-8 w-8 rounded-full bg-yolk hover:brightness-95 disabled:opacity-40">+</button>
             </div>
           ))}
 
@@ -154,7 +154,7 @@ export default function Ventas() {
         </aside>
       </div>
       {cart.length > 0 && (
-        <a href="#carrito" className="fixed inset-x-4 bottom-[76px] z-30 flex items-center justify-between rounded-2xl bg-navy px-5 py-3.5 text-white shadow-lg md:hidden">
+        <a href="#carrito" className="fixed inset-x-4 bottom-[76px] z-30 flex items-center justify-between rounded-2xl bg-coal px-5 py-3.5 text-white shadow-lg md:hidden">
           <span className="text-sm">{cart.reduce((n, l) => n + l.qty, 0)} {cart.reduce((n, l) => n + l.qty, 0) === 1 ? "prenda" : "prendas"}</span>
           <span className="display text-lg font-semibold">Cobrar · {money(total)}</span>
         </a>

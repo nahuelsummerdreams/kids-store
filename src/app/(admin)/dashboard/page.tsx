@@ -83,10 +83,10 @@ export default function Dashboard() {
   const greet = hour < 12 ? "Buen día" : hour < 20 ? "Buenas tardes" : "Buenas noches";
   const avg = d.count ? d.month / d.count : 0;
   const small = [
-    { label: "Ventas del mes", value: String(d.count), tone: "bg-sky/60" },
-    { label: "Ticket promedio", value: money(avg), tone: "bg-mint/70" },
-    { label: "Ganancia estimada", value: money(d.profit), tone: "bg-sun/60" },
-    { label: "Stock bajo", value: String(d.lowTotal), tone: "bg-blush/70" },
+    { label: "Ventas del mes", value: String(d.count), tone: "bg-white ring-1 ring-coal/10", fg: "text-coal", sub: "text-coal/55" },
+    { label: "Ticket promedio", value: money(avg), tone: "bg-butter", fg: "text-coal", sub: "text-coal/60" },
+    { label: "Ganancia estimada", value: money(d.profit), tone: "bg-white ring-1 ring-coal/10", fg: "text-coal", sub: "text-coal/55" },
+    { label: "Stock bajo", value: String(d.lowTotal), tone: "bg-coal", fg: "text-white", sub: "text-white/60" },
   ];
 
   return (
@@ -96,20 +96,19 @@ export default function Dashboard() {
         <h1 className="page-title mt-1">{greet} 👋</h1>
       </header>
 
-      <div className="relative overflow-hidden rounded-[32px] bg-navy p-7 text-white md:p-9">
-        <div className="pointer-events-none absolute -right-10 -top-10 h-56 w-56 rounded-full bg-sky/20 blur-2xl" />
-        <div className="pointer-events-none absolute -bottom-16 right-24 h-48 w-48 rounded-full bg-blush/20 blur-2xl" />
-        <p className="eyebrow !text-white/55">Facturación de hoy</p>
-        <p className="display mt-2 text-5xl font-semibold md:text-6xl">{money(d.today)}</p>
-        <p className="mt-3 text-sm text-white/65">
-          {money(d.month)} en lo que va del mes
-        </p>
+      <div className="relative overflow-hidden rounded-[32px] bg-yolk text-coal">
+        <div className="p-7 md:p-9">
+          <p className="eyebrow !text-coal/60">Facturación de hoy</p>
+          <p className="display mt-2 text-5xl font-bold md:text-7xl">{money(d.today)}</p>
+          <p className="mt-3 text-sm font-medium text-coal/70">{money(d.month)} en lo que va del mes</p>
+        </div>
+        <div className="hazard h-3" />
       </div>
 
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
         {small.map((k) => (
-          <div key={k.label} className={`rounded-[24px] p-5 ${k.tone}`}>
-            <p className="text-xs font-medium text-ink/60">{k.label}</p>
+          <div key={k.label} className={`rounded-[24px] p-5 ${k.tone} ${k.fg}`}>
+            <p className={`text-xs font-medium ${k.sub}`}>{k.label}</p>
             <p className="display mt-2 text-2xl font-semibold">{k.value}</p>
           </div>
         ))}
@@ -125,10 +124,10 @@ export default function Dashboard() {
                 <div key={i} className="flex h-full flex-1 flex-col items-center justify-end gap-2">
                   <span className="text-[10px] text-ink/50 md:text-xs">{w.v ? compact(w.v) : ""}</span>
                   <div
-                    className={`w-full rounded-2xl transition-all ${today ? "bg-navy" : "bg-sky"}`}
+                    className={`w-full rounded-2xl transition-all ${today ? "bg-coal" : "bg-yolk"}`}
                     style={{ height: `${Math.max((w.v / max) * 100, 3)}%` }}
                   />
-                  <span className={`text-xs ${today ? "font-semibold text-navy" : "text-ink/50"}`}>{w.label}</span>
+                  <span className={`text-xs ${today ? "font-semibold text-coal" : "text-ink/50"}`}>{w.label}</span>
                 </div>
               );
             })}
@@ -142,7 +141,7 @@ export default function Dashboard() {
               {d.top.length === 0 && <li className="text-ink/50">Todavía no hay ventas este mes.</li>}
               {d.top.map(([n, q], i) => (
                 <li key={n} className="flex items-center gap-3">
-                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-sun/70 text-xs font-semibold">{i + 1}</span>
+                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-yolk text-xs font-bold">{i + 1}</span>
                   <span className="flex-1 truncate">{n}</span>
                   <span className="font-medium">{q} u.</span>
                 </li>
@@ -156,7 +155,7 @@ export default function Dashboard() {
               {d.low.map((v, i) => (
                 <li key={i} className="flex items-center justify-between gap-3">
                   <span className="truncate">{v.products?.name} · {v.size}{v.color ? ` ${v.color}` : ""}</span>
-                  <span className={`chip ${v.stock === 0 ? "bg-rose-100 text-rose-700" : "bg-blush text-ink"}`}>{v.stock === 0 ? "Agotado" : `${v.stock} u.`}</span>
+                  <span className={`chip ${v.stock === 0 ? "stock-out" : "stock-low"}`}>{v.stock === 0 ? "Agotado" : `${v.stock} u.`}</span>
                 </li>
               ))}
             </ul>
